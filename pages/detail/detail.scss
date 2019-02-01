@@ -1,0 +1,74 @@
+.connStatus{
+    background: linear-gradient(to left,rgb(95, 233, 233),rgb(119, 214, 214),rgb(170, 201, 201));
+    width:100%;
+    margin: 0 0;
+    height:45px;
+    top:1px;
+    bottom: 1px;
+    color: rgb(17, 17, 17);
+    font-family: 'monoton';
+    font-weight: bold;
+    text-align:center ;
+}
+
+.connectBtnDiv{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap:1em;
+    height: 60px;
+
+}
+
+.btnConnect{
+    background: linear-gradient(to left, rgb(124, 151, 124),rgb(114, 177, 114),rgb(122, 145, 122));
+    position: relative;
+    height:40px;
+    width: 70%;
+    border-radius: 10px;
+    margin: auto;
+    box-shadow: 2px 3px #a6a6a6;
+}
+
+.btnDisconnect{
+    background: linear-gradient(to left, rgb(199, 98, 98),rgb(209, 49, 49),rgb(196, 117, 117));
+    position: relative;
+    height:40px;
+    width: 70%;
+    border-radius: 10px;
+    margin: auto;
+    box-shadow: 2px 3px #a6a6a6;
+}
+
+.btnConnectdup{
+    background: linear-gradient(to left, rgb(150, 153, 150),rgb(222, 224, 222),rgb(242, 245, 242));
+    position: relative;
+    height:40px;
+    width: 70%;
+    border-radius: 10px;
+    margin: auto;
+}
+
+.btnDisconnectdup{
+    background: linear-gradient(to left, rgb(241, 203, 203),rgb(238, 228, 228),rgb(243, 241, 241));
+    position: relative;
+    height:40px;
+    width: 70%;
+    border-radius: 10px;
+    margin: auto;
+}
+
+.BLEAlert{
+    background-color: red;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-weight: 900;
+    color: black;
+    height: 40px;
+}
+
+.charBtn{
+    height:30px;
+    width: 100px;
+    color: aliceblue;
+    border-radius: 2px;
+    background-color: aqua;
+}

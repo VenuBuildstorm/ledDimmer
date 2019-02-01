@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>{{ userDetails.name || 'Device' }}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <div class="BLEAlert" *ngIf="!bleStatus"> 
+          Please Enable BLE
+      </div> 
+    <h2 class="connStatus">{{ connectionStatus }} </h2>
+<div class="connectBtnDiv">
+    <button class="btnConnect" *ngIf="connectionStatus === 'Disconnected' " (click)="onConnectButton()">Connect</button>
+    <button class="btnConnectdup" *ngIf="connectionStatus === 'Connected' " >Connect</button>
+    <button class="btnDisconnect" *ngIf="connectionStatus === 'Connected' " (click)="onDisconnectButton()">Disconnect</button>
+    <button class="btnDisconnectdup" *ngIf="connectionStatus === 'Disconnected' ">Disconnect</button>
+</div>
+
+<ion-list *ngIf="connectionStatus === 'Connected' &&  (bleStatus)" >
+
+<!-- <ion-item style="background: linear-gradient(rgb(205, 243, 167),rgb(223, 245, 200)) ">
+  <ion-label>LED Switch</ion-label>
+  <ion-toggle [(ngModel)]="power" (ionChange)="onPowerSwitchChange($event);"></ion-toggle>
+</ion-item> -->
+
+<ion-item style="background-color: rgb(216, 231, 146)">
+
+  </ion-item> 
+
+  <ion-item *ngFor="let characteristic_a of peripheral.characteristics">
+    <p>service: {{characteristic_a.service}}</p>
+    <p>characteristic: {{characteristic_a.characteristic}}</p>
+    <p *ngFor="let prop of characteristic_a.properties">
+      <button class="charBtn">
+        {{prop}}
+      </button>
+    </p>
+    <ion-badge item-end color="secondary">{{ charactersticData[characterstic_a] }}</ion-badge>
+      <ion-range max="100" step ="5" debounce="30" [(ngModel)]="charactersticData[characterstic_a]" (ionChange)="onPowerSwitchChangeDup($event)">
+  
+        <ion-icon range-left small name="sunny"></ion-icon>
+        <ion-icon range-right name="sunny"></ion-icon>
+      </ion-range>    
+  </ion-item>
+
+
+
+
+
+<!-- {{peripheral | json }} -->
+<!-- <ion-item style="background-color: rgb(216, 231, 146)">
+    <ion-badge item-end color="secondary">{{brightness}}</ion-badge>
+    <ion-range max="100" debounce="30" [(ngModel)]="brightness" (ionChange)="setBrightness($event)">
+      <ion-icon range-left small name="sunny"></ion-icon>
+      <ion-icon range-right name="sunny"></ion-icon>
+    </ion-range>
+  </ion-item> -->
+
+</ion-list>
+</ion-content>
+
+
