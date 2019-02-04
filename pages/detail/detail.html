@@ -8,55 +8,48 @@
     <div class="BLEAlert" *ngIf="!bleStatus"> 
           Please Enable BLE
       </div> 
-    <h2 class="connStatus">{{ connectionStatus }} </h2>
+      <h3 class="connStatus">{{connectionStatus}}</h3>
 <div class="connectBtnDiv">
     <button class="btnConnect" *ngIf="connectionStatus === 'Disconnected' " (click)="onConnectButton()">Connect</button>
-    <button class="btnConnectdup" *ngIf="connectionStatus === 'Connected' " >Connect</button>
+    <button class="btnConnectdup" *ngIf="connectionStatus === 'Connected' " >Connected</button>
     <button class="btnDisconnect" *ngIf="connectionStatus === 'Connected' " (click)="onDisconnectButton()">Disconnect</button>
-    <button class="btnDisconnectdup" *ngIf="connectionStatus === 'Disconnected' ">Disconnect</button>
+    <button class="btnDisconnectdup" *ngIf="connectionStatus === 'Disconnected' ">Disconnected</button>
 </div>
 
-<ion-list *ngIf="connectionStatus === 'Connected' &&  (bleStatus)" >
-
-<!-- <ion-item style="background: linear-gradient(rgb(205, 243, 167),rgb(223, 245, 200)) ">
-  <ion-label>LED Switch</ion-label>
-  <ion-toggle [(ngModel)]="power" (ionChange)="onPowerSwitchChange($event);"></ion-toggle>
-</ion-item> -->
+<ion-list >
+  <!-- *ngIf="connectionStatus === 'Connected' &&  (bleStatus)"  -->
 
 <ion-item style="background-color: rgb(216, 231, 146)">
 
-  </ion-item> 
+</ion-item> 
 
-  <ion-item *ngFor="let characteristic_a of peripheral.characteristics">
-    <p>service: {{characteristic_a.service}}</p>
-    <p>characteristic: {{characteristic_a.characteristic}}</p>
-    <p *ngFor="let prop of characteristic_a.properties">
-      <button class="charBtn">
-        {{prop}}
+  <ion-item *ngFor="let chrstic of peripheral.characteristics;let charIndex = index">
+    <p>service: {{chrstic.service}}</p>
+    <p>characteristic: {{chrstic.characteristic}}</p>
+    <ion-item *ngFor="let prop of chrstic.properties;let propIndex = index">
+
+      <button class="charBtn" *ngIf = "prop == 'read'" (click)="onReadButton(chrstic.service,chrstic.characteristic,charIndex)">
+        <ion-icon name="glasses"></ion-icon>
       </button>
-    </p>
-    <ion-badge item-end color="secondary">{{ charactersticData[characterstic_a] }}</ion-badge>
-      <ion-range max="100" step ="5" debounce="30" [(ngModel)]="charactersticData[characterstic_a]" (ionChange)="onPowerSwitchChangeDup($event)">
+      <button class="charBtn" *ngIf = "prop == 'write'" (click)="onWriteButton(chrstic.service,chrstic.characteristic,charIndex)">
+        <ion-icon name="paper-plane"></ion-icon>
+      </button>
+      <div *ngIf = "prop[propIndex] == 'notify'">
+      <button class="charBtn"  *ngIf= "notifyStatus"  (click)="onNotifyOnButton(chrstic.service,chrstic.characteristic,charIndex)">
+        <ion-icon name="notifications-outline"></ion-icon>
+      </button>
+      <button class="charBtn" *ngIf= "!notifyStatus" (click)="onNotifyOffButton(chrstic.service,chrstic.characteristic,charIndex)">
+        <ion-icon name="notifications-off"></ion-icon>
+      </button>
+    </div>
+    <!-- </ion-item> -->
+    <ion-badge item-end color="danger">{{ charactersticData[charIndex] }}</ion-badge>
   
-        <ion-icon range-left small name="sunny"></ion-icon>
-        <ion-icon range-right name="sunny"></ion-icon>
-      </ion-range>    
   </ion-item>
 
 
-
-
-
-<!-- {{peripheral | json }} -->
-<!-- <ion-item style="background-color: rgb(216, 231, 146)">
-    <ion-badge item-end color="secondary">{{brightness}}</ion-badge>
-    <ion-range max="100" debounce="30" [(ngModel)]="brightness" (ionChange)="setBrightness($event)">
-      <ion-icon range-left small name="sunny"></ion-icon>
-      <ion-icon range-right name="sunny"></ion-icon>
-    </ion-range>
-  </ion-item> -->
-
 </ion-list>
 </ion-content>
+
 
 

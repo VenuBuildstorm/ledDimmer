@@ -1,14 +1,6 @@
 import { Component, NgZone } from '@angular/core';
 import { NavController, NavParams, ToastController } from 'ionic-angular';
 import { BLE } from '@ionic-native/ble';
-import { Diagnostic } from '@ionic-native/diagnostic';
-
-const LIGHTBULB_SERVICE = '00001523-1212-efde-1523-785feabcd123';
-const SWITCH_CHARACTERISTIC = '00001525-1212-efde-1523-785feabcd123';
-// const BUTTON_CHARACTERISTIC = '00001524-1212-efde-1523-785feabcd123';
-// const DIMMER_CHARACTERISTIC = 'ff12';
-const DIMMER_SERVICE = '00002a05-1212-efde-1523-785feabcd123';
-const DIMMER_CHARACTERISTIC = '0000beef-1212-efde-1523-785feabcd123';
 
 @Component({
   selector: 'page-detail',
@@ -25,6 +17,7 @@ export class DetailPage {
   connectionStatus: string = 'Disconnected';
   bleStatus: boolean;
   charactersticData:any = [];
+  notifyStatus:boolean = true;
   constructor(public navCtrl: NavController, public navParams: NavParams, private ble: BLE,
     private ngZone: NgZone, private toastCtrl: ToastController) {
 
@@ -64,41 +57,21 @@ export class DetailPage {
 
   onConnected(peripheral) {
     this.peripheral = peripheral;
-    this.connectionStatus = 'Connected';
-    peripheral.forEach((item, index) => {
-      this.ble.read(this.peripheral.id, item.service, item.charactarstic).then(
-        buffer => {
-          let data = new Uint8Array(buffer);
-          this.ngZone.run(
-            () => {
-              this.charactersticData[index] = data[0];
-            });
-        }
-        )
-  });
-    
+    this.ngZone.run(
+              () => {
+        this.connectionStatus = 'Connected';
+              });
+  //   peripheral.charactarstics.forEach((item, index) => {
 
-    // var someArray = [9, 2, 5];
-    // console.log(item); // 9, 2, 5
-    // console.log(index); // 0, 1, 2
-
-    // this.ble.read(this.peripheral.id, LIGHTBULB_SERVICE, SWITCH_CHARACTERISTIC).then(
-    //   buffer => {
-    //     let data = new Uint8Array(buffer);
-    //     this.ngZone.run(() => {
-    //       this.power = data[0] !== 0;
-    //     });
-    //   }
-    // )
-
-    // this.ble.read(this.peripheral.id, DIMMER_SERVICE, DIMMER_CHARACTERISTIC).then(
-    //   buffer => {
-    //     let data = new Uint8Array(buffer);
-    //     this.ngZone.run(() => {
-    //       this.brightness = data[0];
-    //     });
-    //   }
-    // )
+  //     this.ble.read(this.peripheral.id, item.service, item.charactarstic).then(
+  //       buffer => {
+  //         let data = new Uint8Array(buffer);
+  //         this.ngZone.run(
+  //           () => {
+  //             this.charactersticData[index] = data[0];
+  //           });
+  //     });
+  // });
   }
 
   onDeviceDisconnected(peripheral) {
@@ -106,7 +79,7 @@ export class DetailPage {
       this.connectionStatus = 'Disconnected';
     });
     let toast = this.toastCtrl.create({
-      message: 'The peripheral unexpectedly disconnected',
+      message: 'Disconnected \n please connect again.',
       duration: 2000,
       position: 'middle'
     });
@@ -132,34 +105,51 @@ export class DetailPage {
     )
   }
 
-  // onPowerSwitchChange(event) {
-  //   let value = this.power ? 1 : 0;
-  //   let buffer = new Uint8Array([value]).buffer;
-  //   this.ble.write(this.peripheral.id, LIGHTBULB_SERVICE, SWITCH_CHARACTERISTIC, buffer).then(
-  //     () => {
-  //       e => alert('Error updating power switch');
-  //     }
-  //   );
-  // }
 
-  onPowerSwitchChangeDup(event) {
-    let value = (this.brightness % 2) ? 1 : 0;
-    let buffer = new Uint8Array([value]).buffer;
-    this.ble.write(this.peripheral.id, LIGHTBULB_SERVICE, SWITCH_CHARACTERISTIC, buffer).then(
-      () => {
-        e => alert('Error updating power switch');
-      }
-    );
-  }
+ onReadButton(service,charactarstic,index){
+     this.ble.read(this.peripheral.id,service,charactarstic).then(
+       buffer => {
+          let data = new Uint8Array(buffer);
+          this.ngZone.run(
+            () => {
+              this.charactersticData[index] = data[0];
+            });
+       },
+       () => {
 
-  setBrightness(event) {
-    let value = this.brightness;
-    let buffer = new Uint8Array([value]).buffer;
-    this.ble.write(this.peripheral.id, DIMMER_SERVICE, DIMMER_CHARACTERISTIC, buffer).then(
-      () => {
-        e => alert('Error updating power switch');
-      }
-    );
-  }
+       }
+     )
+ }
 
+ onWriteButton(service,charactarstic,index){
+  let value = this.charactersticData[index];
+  let buffer = new Uint8Array([value]).buffer;
+  this.ble.write(this.peripheral.id, service, charactarstic, buffer).then(
+    () => {},
+    e => {}
+  );
 }
+
+onNotifyOnButton(service,charactarstic,index){
+  this.ble.startNotification(this.peripheral.id, service, charactarstic).subscribe(
+      buffer => {
+        let data = new Uint8Array(buffer);
+        this.ngZone.run(() => {
+            this.charactersticData[index] = data[0] ;
+            this.notifyStatus = false;
+        });
+})
+}
+
+onNotifyOffButton(service,charactarstic,index){
+  this.ble.startNotification(this.peripheral.id, service, charactarstic).subscribe(
+    () => {
+      this.ngZone.run(() => {
+      this.notifyStatus = true;
+  });
+    }
+    )
+}
+}
+
+
