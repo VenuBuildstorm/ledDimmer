@@ -6,7 +6,6 @@
         </div>
           <button  class="scan-btn" type="button"  (click)="onScan()">
             <p style="font-family: cursive;font-weight:900;color:rgb(3, 77, 121)">Scan</p></button>
-            <!-- *ngIf="locationStatus && bleStatus" -->
     </div>
 
     <ion-refresher slot="fixed" (ionRefresh)="onScanRefresher($event)"  pullMax="180">
@@ -42,18 +41,15 @@
     </button>
   </div> 
 
-  <!-- *ngIf="locationStatus && bleStatus" -->
-
   <ion-list> 
     <button class="devicesButton" ion-item *ngFor="let device of devices" (click)="deviceSelected(device)">
       <h2 style="font-family: 'Times New Roman', Times, serif;font-weight: bold;color: black">{{ device.name  }}</h2>
-      <p style="color: rgb(170, 123, 5)">{{ device.id }}</p>
-      <p style="color: rgb(202, 146, 5)">RSSI: {{ device.rssi }}</p>
+      <p style="color: rgb(61, 44, 2)">{{ device.id }}</p>
+      <p style="color: rgb(58, 42, 1)">RSSI: {{ device.rssi }}</p>
     </button>
    </ion-list>
 
 </ion-content>
 
-<!-- <div class="main1" *ngIf="!locationStatus || !bleStatus"> -->
 
   

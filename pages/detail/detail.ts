@@ -1,6 +1,7 @@
 import { Component, NgZone } from '@angular/core';
-import { NavController, NavParams, ToastController } from 'ionic-angular';
+import { NavController, NavParams, ToastController, AlertController } from 'ionic-angular';
 import { BLE } from '@ionic-native/ble';
+
 
 @Component({
   selector: 'page-detail',
@@ -19,7 +20,7 @@ export class DetailPage {
   charactersticData:any = [];
   notifyStatus:boolean = true;
   constructor(public navCtrl: NavController, public navParams: NavParams, private ble: BLE,
-    private ngZone: NgZone, private toastCtrl: ToastController) {
+    private ngZone: NgZone, private toastCtrl: ToastController,private alertCtrl: AlertController) {
 
     this.bleStatus = this.navParams.get('bleStatus');
     this.userDetails = this.navParams.get('device');
@@ -61,17 +62,7 @@ export class DetailPage {
               () => {
         this.connectionStatus = 'Connected';
               });
-  //   peripheral.charactarstics.forEach((item, index) => {
 
-  //     this.ble.read(this.peripheral.id, item.service, item.charactarstic).then(
-  //       buffer => {
-  //         let data = new Uint8Array(buffer);
-  //         this.ngZone.run(
-  //           () => {
-  //             this.charactersticData[index] = data[0];
-  //           });
-  //     });
-  // });
   }
 
   onDeviceDisconnected(peripheral) {
@@ -122,6 +113,20 @@ export class DetailPage {
  }
 
  onWriteButton(service,charactarstic,index){
+  const alert1 = this.alertCtrl.create({
+    title:'Enter Value',
+    inputs:[{
+        name:'value',
+        placeholder: 'number',
+        type: 'number'
+    }],
+    buttons:[{
+        text: 'ok',
+        handler: (value) =>{
+            this.charactersticData[index] = value;
+        }
+    }]
+}).present();
   let value = this.charactersticData[index];
   let buffer = new Uint8Array([value]).buffer;
   this.ble.write(this.peripheral.id, service, charactarstic, buffer).then(
@@ -151,5 +156,14 @@ onNotifyOffButton(service,charactarstic,index){
     )
 }
 }
+  //   peripheral.charactarstics.forEach((item, index) => {
 
-
+  //     this.ble.read(this.peripheral.id, item.service, item.charactarstic).then(
+  //       buffer => {
+  //         let data = new Uint8Array(buffer);
+  //         this.ngZone.run(
+  //           () => {
+  //             this.charactersticData[index] = data[0];
+  //           });
+  //     });
+  // });

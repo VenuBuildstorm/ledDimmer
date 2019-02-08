@@ -1,10 +1,8 @@
 import { Component, NgZone } from '@angular/core';
 import { AlertController, ToastController, NavController } from 'ionic-angular';
 import { BLE } from '@ionic-native/ble';
-import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { DetailPage } from '../detail/detail';
-
 
 @Component({
   selector: 'page-home',
@@ -18,15 +16,15 @@ export class HomePage {
   devices: any[] = [];
 
   constructor(public ble: BLE, private alertCtrl: AlertController,
-    public locationaccuracy: LocationAccuracy, private diagnostic: Diagnostic,public ngZone:NgZone,
-    private toastCtrl:ToastController,private navCtrl:NavController) {
-      this.triggerGPSSwitch();
-      this.bluetoothFunc();
-    }
+    private diagnostic: Diagnostic, public ngZone: NgZone,
+    private toastCtrl: ToastController, private navCtrl: NavController) {
+    this.triggerGPSSwitch();
+    this.bluetoothFunc();
+  }
 
-ionViewDidLoad(){
-  this.triggerBLESwitch();
-}
+  ionViewDidLoad() {
+    this.triggerBLESwitch();
+  }
 
   triggerBLESwitch() {
     this.diagnostic.registerBluetoothStateChangeHandler(
@@ -50,12 +48,12 @@ ionViewDidLoad(){
       (state) => {
         if (state === this.diagnostic.locationMode.HIGH_ACCURACY) {
           this.ngZone.run(() => {
-          this.locationStatus = true;
+            this.locationStatus = true;
           });
         }
         else if (state === this.diagnostic.locationMode.LOCATION_OFF) {
           this.ngZone.run(() => {
-          this.locationStatus = false;
+            this.locationStatus = false;
           });
         }
       }
@@ -87,23 +85,9 @@ ionViewDidLoad(){
     );
   }
 
-  openBLESettingsPage(){
+  openBLESettingsPage() {
     this.diagnostic.switchToBluetoothSettings();
   }
-
-
-  bleStatusFunc() {
-    this.ble.isEnabled().then(
-      () => {
-        this.bleStatus = true;
-      },
-      () => {
-        this.enableBLE();
-        this.bleStatus = false;
-      }
-    );
-  }
-
 
   locationFunc() {
     this.diagnostic.isLocationEnabled().then(
@@ -121,37 +105,26 @@ ionViewDidLoad(){
       });
   }
 
-  enableLocaton() {
-    this.locationaccuracy.request(this.locationaccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(
-      () => {
-        this.locationStatus = true;
-      },
-      error => {
-        this.locationStatus = false;
-      }
-    );
-  }
-
-  openGPSSettingsPage(){
+  openGPSSettingsPage() {
     this.diagnostic.switchToLocationSettings();
   }
 
   GPSDetailsAlert() {
- const alert_1 = this.alertCtrl.create({
-  title: 'Location Service.',
-  message: 'your phone may require the Location service to be enabled in order to scan\
+    const alert_1 = this.alertCtrl.create({
+      title: 'Location Service.',
+      message: 'your phone may require the Location service to be enabled in order to scan\
  for Bluetooth LE devices.',
-  cssClass: 'alertStyle',
-  buttons: [
-    {
-      text: 'OK',
-      role: 'cancel',
-      handler: () => {
-      }
-    }
-  ]
-});
-alert_1.present();
+      cssClass: 'alertStyle',
+      buttons: [
+        {
+          text: 'OK',
+          role: 'cancel',
+          handler: () => {
+          }
+        }
+      ]
+    });
+    alert_1.present();
   }
 
   alertBoxBLE() {
@@ -185,7 +158,6 @@ alert_1.present();
         {
           text: 'Allow',
           handler: () => {
-            // this.enableLocaton();
             this.openGPSSettingsPage();
           }
         },
@@ -202,47 +174,42 @@ alert_1.present();
   }
 
 
-onScan() {
-  this.devices = [];  // clear list
+  onScan() {
+    this.devices = [];  // clear list
 
-  this.ble.scan([], 8).subscribe(
-    device => this.onDeviceDiscovered(device), 
-    error => this.scanError(error)
-  );
+    this.ble.scan([], 8).subscribe(
+      device => this.onDeviceDiscovered(device),
+      error => this.scanError(error)
+    );
+    console.log(this.devices);
+  }
 
-  // setTimeout(this.setStatus.bind(this), 5000, 'Scan complete');
+  onScanRefresher(event) {
+    this.onScan();
+    setTimeout(() => {
+      event.complete();
+    }, 2000);
+  }
 
-  console.log(this.devices);
-}
+  onDeviceDiscovered(device) {
+    console.log('Discovered ' + JSON.stringify(device, null, 2));
+    this.ngZone.run(() => {
+      this.devices.push(device);
+    });
+  }
 
-onScanRefresher(event){
-  this.onScan();
-  // event.complete();
-  setTimeout(() => {
-    event.complete();
-  }, 2000);
-}
+  scanError(error) {
+    let toast = this.toastCtrl.create({
+      message: 'Error scanning for Bluetooth low energy devices',
+      position: 'middle',
+      duration: 5000
+    });
+    toast.present();
+  }
 
-onDeviceDiscovered(device) {
-  console.log('Discovered ' + JSON.stringify(device, null, 2));
-  this.ngZone.run(() => {
-    this.devices.push(device);
-  });
-}
-
-scanError(error) {
-  // this.setStatus('Error ' + error);
-  let toast = this.toastCtrl.create({
-    message: 'Error scanning for Bluetooth low energy devices',
-    position: 'middle',
-    duration: 5000
-  });
-  toast.present();
-}
-
-deviceSelected(device) {  
-  this.navCtrl.push(DetailPage , {
-    device: device, bleStatus:Boolean
-  });
-}
+  deviceSelected(device) {
+    this.navCtrl.push(DetailPage, {
+      device: device, bleStatus: Boolean
+    });
+  }
 }

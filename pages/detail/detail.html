@@ -16,25 +16,20 @@
     <button class="btnDisconnectdup" *ngIf="connectionStatus === 'Disconnected' ">Disconnected</button>
 </div>
 
-<ion-list >
-  <!-- *ngIf="connectionStatus === 'Connected' &&  (bleStatus)"  -->
-
-<ion-item style="background-color: rgb(216, 231, 146)">
-
-</ion-item> 
+<ion-list > 
 
   <ion-item *ngFor="let chrstic of peripheral.characteristics;let charIndex = index">
     <p>service: {{chrstic.service}}</p>
     <p>characteristic: {{chrstic.characteristic}}</p>
-    <ion-item *ngFor="let prop of chrstic.properties;let propIndex = index">
-
-      <button class="charBtn" *ngIf = "prop == 'read'" (click)="onReadButton(chrstic.service,chrstic.characteristic,charIndex)">
-        <ion-icon name="glasses"></ion-icon>
+    <div class="propbtn">
+<div *ngFor="let prop of chrstic.properties;let propIndex = index" >
+      <button *ngIf = "prop == 'Read' " class="charBtn" (click)="onReadButton(chrstic.service,chrstic.characteristic,charIndex)">
+        <ion-icon name="eye"></ion-icon>
       </button>
-      <button class="charBtn" *ngIf = "prop == 'write'" (click)="onWriteButton(chrstic.service,chrstic.characteristic,charIndex)">
-        <ion-icon name="paper-plane"></ion-icon>
+      <button *ngIf = "prop == 'Write'" class="charBtn"  (click)="onWriteButton(chrstic.service,chrstic.characteristic,charIndex)">
+        <ion-icon name="create"></ion-icon>
       </button>
-      <div *ngIf = "prop[propIndex] == 'notify'">
+      <div *ngIf = "prop == 'Notify'">
       <button class="charBtn"  *ngIf= "notifyStatus"  (click)="onNotifyOnButton(chrstic.service,chrstic.characteristic,charIndex)">
         <ion-icon name="notifications-outline"></ion-icon>
       </button>
@@ -42,12 +37,10 @@
         <ion-icon name="notifications-off"></ion-icon>
       </button>
     </div>
-    <!-- </ion-item> -->
-    <ion-badge item-end color="danger">{{ charactersticData[charIndex] }}</ion-badge>
-  
+</div>
+</div>
+<ion-badge item-end color="danger">{{ charactersticData[charIndex] }}</ion-badge>
   </ion-item>
-
-
 </ion-list>
 </ion-content>
 
